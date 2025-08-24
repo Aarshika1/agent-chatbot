@@ -1,0 +1,10 @@
+streamlit>=1.36.0
+openai>=1.40.0
+langchain>=0.2.0
+langchain-openai>=0.1.7
+langchain-community>=0.2.0
+faiss-cpu>=1.7.4
+python-dotenv>=1.0.1
+pandas>=2.2.0
+pypdf>=4.2.0
+numexpr>=2.8.6

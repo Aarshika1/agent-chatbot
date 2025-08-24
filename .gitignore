@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+.env
+.env.*
+
+# Streamlit
+.streamlit/
+
+# Indexes / caches
+indexes/
+*.npz
+*.npy
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
