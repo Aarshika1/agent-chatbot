@@ -6,6 +6,23 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
+from langchain.prompts import PromptTemplate
+
+PROMPT = PromptTemplate(
+    input_variables=["context", "question"],
+    template=(
+        "You are Aarshika's website assistant. Answer ONLY with information from context.\n"
+        "If the answer is not clearly supported, respond politely:\n"
+        "\"I'm not sure based on Aarshika's documents. If you point me to the right file or section, I can learn it.\"\n\n"
+        "Priorities:\n"
+        "- Use 'Aarshika_Singh_Portfolio_RAG.pdf' for profile, skills, contact.\n"
+        "- Use project PDFs for project details.\n\n"
+        "Context:\n{context}\n\n"
+        "Question:\n{question}\n\n"
+        "Answer:"
+    ),
+)
+
 
 ENDPOINT = "https://models.inference.ai.azure.com"
 from dotenv import load_dotenv; load_dotenv()
@@ -57,7 +74,7 @@ def load_index():
 def answer(query: str, chat_history=None):
     retriever = load_index().as_retriever(search_kwargs={"k": 4})
     llm = ChatOpenAI(model=CHAT_MODEL, temperature=0.2, api_key=GITHUB_TOKEN, base_url=ENDPOINT)
-    qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, return_source_documents=True)
+    qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, return_source_documents=True,chain_type_kwargs={"prompt": PROMPT})
 
     history_str = "".join([f"{t['role']}: {t['content']}\n" for t in (chat_history or [])])
     custom_prompt = f"You are Aarshika's assistant.\n{history_str}\nUser query: {query}"
@@ -69,4 +86,9 @@ def answer(query: str, chat_history=None):
         fn = os.path.basename(doc.metadata.get("source", "Unknown"))
         pg = doc.metadata.get("page")
         sources.append(f"{fn}, page {pg+1}" if pg is not None else fn)
+    
+    if not sources or not ans.strip() or "I'm not sure" in ans:
+        ans = "I'm not sure based on Aarshika's documents. If you point me to the right file or section, I can learn it."
+        return ans, []
+
     return ans, sorted(set(sources))
