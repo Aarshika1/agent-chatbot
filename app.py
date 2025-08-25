@@ -1,23 +1,40 @@
 import time, streamlit as st
 from agent import agent_router
 
-st.set_page_config(page_title="Aarshika Agent", page_icon="🤖")
+st.set_page_config(page_title="Aarshika's Chatbot", page_icon="🤖")
 
 with st.sidebar:
     st.header("⚙️ Settings")
     if "show_tools" not in st.session_state: st.session_state.show_tools = True
     st.session_state.show_tools = st.checkbox("Show Tool Used", value=st.session_state.show_tools)
     st.caption("Agent routes between RAG, Calculator, and General.")
+    with st.expander("ℹ️ About Agent Tools", expanded=False):
+        st.markdown("""
+**The agent automatically decides how to answer your query using three tools:**
 
-st.title("🧠 Aarshika Chatbot Agent")
+**RAG (Retrieval-Augmented Generation):**  
+Uses documents to answer questions about Aarshika and her work or hobbies.
+
+**Calculator:**  
+Handles straightforward mathematical queries such as arithmetic, multiplication, division, and percentages.
+
+**General:**  
+A general-purpose LLM response for all other queries not suited for RAG or Calculator.
+""")
+
+st.title("🧠 Aarshika's Chatbot Agent")
 
 if "messages" not in st.session_state: st.session_state.messages = []
 if "pending" not in st.session_state: st.session_state.pending = None
 
-user_in = st.text_input("Ask me anything…", key="user_in", label_visibility="collapsed")
+user_in = st.text_input(
+    "Ask anything in general or specific to Aarshika…",
+    key="user_in",
+    label_visibility="collapsed"
+)
 col1, col2 = st.columns([1,1])
-with col1: send = st.button("Send", use_container_width=True)
-with col2: clear = st.button("Clear", use_container_width=True)
+with col1: send = st.button("📤 Send", use_container_width=True)
+with col2: clear = st.button("🗑️ Clear", use_container_width=True)
 
 if clear:
     st.session_state.messages.clear(); st.rerun()
