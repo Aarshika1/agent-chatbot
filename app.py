@@ -29,6 +29,7 @@ if "pending" not in st.session_state: st.session_state.pending = None
 
 user_in = st.text_input(
     "Ask anything in general or specific to Aarshika…",
+    placeholder="Ask anything in general or specific to Aarshika…",
     key="user_in",
     label_visibility="collapsed"
 )
